@@ -1,0 +1,86 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mini WhatsApp Web</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      height: 100vh;
+      margin: 0;
+    }
+    .sidebar {
+      width: 25%;
+      background: #f0f0f0;
+      padding: 10px;
+      border-right: 1px solid #ccc;
+    }
+    .chat {
+      width: 75%;
+      display: flex;
+      flex-direction: column;
+    }
+    #messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      background: #fff;
+      border-bottom: 1px solid #ccc;
+    }
+    #form {
+      display: flex;
+    }
+    #input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-top: 1px solid #ccc;
+    }
+    button {
+      padding: 10px;
+      border: none;
+      background: #4caf50;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h3>Kontak</h3>
+    <p>Semua pengguna aktif</p>
+  </div>
+  <div class="chat">
+    <div id="messages"></div>
+    <form id="form">
+      <input id="input" autocomplete="off" placeholder="Ketik pesan..." />
+      <button>Kirim</button>
+    </form>
+  </div>
+
+  <script>
+    const socket = new WebSocket("ws://localhost:3000");
+
+    const form = document.getElementById("form");
+    const input = document.getElementById("input");
+    const messages = document.getElementById("messages");
+
+    socket.onmessage = (event) => {
+      const msg = document.createElement("div");
+      msg.textContent = event.data;
+      messages.appendChild(msg);
+      messages.scrollTop = messages.scrollHeight;
+    };
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (input.value) {
+        socket.send(input.value);
+        input.value = "";
+      }
+    });
+  </script>
+</body>
+</html>
